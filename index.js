@@ -2,16 +2,14 @@ const express = require('express');
 
 const OAuth = require('oauth')
 const { promisify } = require('util')
-
-const CONSUMERKEY = 'zyyVL9TdKH0HMKnm1X4wh8ShA';
-const CONSUMERSECRET = 'TXZQdWxRrui1qE4SgWjjzITu5XcQ9RMvHrM0eokxvmKFuHgO51';
+require('dotenv').config()
 
 async function getTwitterUserProfileWithOAuth1 (url) {
   var oauth = new OAuth.OAuth(
     'https://api.twitter.com/oauth/request_token',
     'https://api.twitter.com/oauth/access_token',
-    CONSUMERKEY,
-    CONSUMERSECRET,
+    process.env.CONSUMERKEY,
+    process.env.CONSUMERSECRET,
     '1.0A', null, 'HMAC-SHA1'
   )
   const get = promisify(oauth.get.bind(oauth))
