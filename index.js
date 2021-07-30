@@ -30,7 +30,8 @@ const app = express();
 //app.use("/", router);
 
 app.get('/tweets',async (req, res) => {
-    const data = await fetchTweets(req.param.username);
+    
+    const data = await fetchTweets(req.query.username);
     res.json(data);
 });
 
@@ -38,16 +39,12 @@ app.get('/tweets',async (req, res) => {
 
 function fetchTweets(username = 'ishankbahl97') {
 
-    return getTwitterUserProfileWithOAuth1(`https://api.twitter.com/1.1/search/tweets.json?q=${username}`).then(data => {
-        if(data.statuses.length) {
-            return getTwitterUserProfileWithOAuth1(`https://api.twitter.com/1.1/statuses/user_timeline.json?user_id=${data.statuses[0].user.id}&count=2000`).then(data1 => ({
-                7: data.statuses,
-                200: data1,
-            }));
-        }
-    }); 
+    return getTwitterUserProfileWithOAuth1(`https://api.twitter.com/1.1/users/lookup.json?screen_name=${username}`).then(data => {
+        return getTwitterUserProfileWithOAuth1(`https://api.twitter.com/1.1/statuses/user_timeline.json?user_id=${data[0].id}&count=2000`).then(data1 => ({
+            data: data1
+        })).catch(err => err); ;
+    }).catch(err => err); 
 }
 
-// fetchTweets().then(data => console.log(data));
-console.log(process.env.PORT || 3000);
+
 app.listen(process.env.PORT || 3000)
